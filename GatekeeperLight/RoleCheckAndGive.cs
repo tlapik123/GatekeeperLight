@@ -41,25 +41,26 @@ public class RoleCheckAndGive {
     /// Check if the user has a configured role in a configured server and give him a configured role in configured server.  
     /// </summary>
     /// <param name="user">User to check and give a role to.</param>
-    public async Task CheckAndGiveRole(DiscordUser user) {
+    public async Task<bool> CheckAndGiveRole(DiscordUser user) {
         if (_guildFromRole is null || _guildToRole is null || _guildFrom is null || _guildTo is null) {
             // Object has not yet been initialized
-            return;
+            return false;
         }
 
         var guildFromMember = await _guildFrom.GetMemberAsync(user.Id);
         var guildToMember = await _guildTo.GetMemberAsync(user.Id);
         if (user.IsBot || guildFromMember is null || guildToMember is null) {
             // TODO: somehow do the error handling
-            return;
+            return false;
         }
 
         if (!guildFromMember.Roles.Contains(_guildFromRole)) {
             // TODO: user doesnt have the required role
-            return;
+            return false;
         }
 
         await guildToMember.GrantRoleAsync(_guildToRole,
             $"Also has role: {_guildFromRole.Name} in {_guildFrom.Name} server.");
+        return true;
     }
 }
