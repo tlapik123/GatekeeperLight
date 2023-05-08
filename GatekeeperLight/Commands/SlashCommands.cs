@@ -26,8 +26,9 @@ public sealed class SlashCommands : ApplicationCommandModule {
         "Verify all the people on the server")]
     public async Task VerifyAllCommand(InteractionContext ctx) {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
-        
-        foreach (var (_, member) in ctx.Guild.Members) {
+
+        foreach (var member in await ctx.Guild.GetAllMembersAsync()) {
+            if (member.IsBot) continue;
             await _roleCheckAndGiveHandler.CheckAndGiveRole(member);
         }
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Done. Tried to verify all the users."));
