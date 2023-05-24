@@ -63,12 +63,12 @@ public class RoleCheckAndGive {
             // TODO: user doesnt have the required role
             return false;
         }
-
+        
         foreach (var toRole in _guildToRoles) {
             await guildToMember.GrantRoleAsync(toRole,
                 $"Also has role: {_guildFromRole.Name} in {_guildFrom.Name} server.");
         }
-
+        Console.WriteLine($"Gave role to: {guildToMember.Nickname}: {guildToMember.Id}");
         return true;
     }
 }

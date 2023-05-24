@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
+using Microsoft.Extensions.Logging;
 
 namespace GatekeeperLight.Commands;
 
@@ -26,7 +27,7 @@ public sealed class SlashCommands : ApplicationCommandModule {
         "Verify all the people on the server")]
     public async Task VerifyAllCommand(InteractionContext ctx) {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
-
+        
         foreach (var member in await ctx.Guild.GetAllMembersAsync()) {
             if (member.IsBot) continue;
             await _roleCheckAndGiveHandler.CheckAndGiveRole(member);
