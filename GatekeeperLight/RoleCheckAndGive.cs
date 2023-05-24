@@ -50,8 +50,16 @@ public class RoleCheckAndGive {
             return false;
         }
 
-        var guildFromMember = await _guildFrom.GetMemberAsync(user.Id);
-        var guildToMember = await _guildTo.GetMemberAsync(user.Id);
+        if (!_guildFrom.Members.TryGetValue(user.Id, out var guildFromMember)) {
+            // TODO: user is not on the from server.
+            return false;
+        }
+        
+        if (!_guildFrom.Members.TryGetValue(user.Id, out var guildToMember)) {
+            // TODO: user is not on the "to" server
+            return false;
+        }
+
         if (user.IsBot || guildFromMember is null || guildToMember is null) {
             // TODO: somehow do the error handling
             return false;
@@ -63,11 +71,12 @@ public class RoleCheckAndGive {
             // TODO: user doesnt have the required role
             return false;
         }
-        
+
         foreach (var toRole in _guildToRoles) {
             await guildToMember.GrantRoleAsync(toRole,
                 $"Also has role: {_guildFromRole.Name} in {_guildFrom.Name} server.");
         }
+
         Console.WriteLine($"Gave role to: {guildToMember.Nickname}: {guildToMember.Id}");
         return true;
     }

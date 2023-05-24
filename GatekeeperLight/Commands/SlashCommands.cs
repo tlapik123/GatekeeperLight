@@ -28,6 +28,8 @@ public sealed class SlashCommands : ApplicationCommandModule {
     public async Task VerifyAllCommand(InteractionContext ctx) {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
         
+        Console.WriteLine("Starting the verify all process");
+
         foreach (var member in await ctx.Guild.GetAllMembersAsync()) {
             if (member.IsBot) continue;
             await _roleCheckAndGiveHandler.CheckAndGiveRole(member);
