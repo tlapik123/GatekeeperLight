@@ -8,20 +8,20 @@ public class RoleCheckAndGive {
     private readonly ulong _guildFromId;
     private readonly ulong _guildFromRoleId;
     private readonly ulong _guildToId;
-    private readonly ulong _guildToRoleId;
+    private readonly List<ulong> _guildToRoleIds;
 
     private DiscordGuild? _guildFrom;
     private DiscordRole? _guildFromRole;
     private DiscordGuild? _guildTo;
-    private DiscordRole? _guildToRole;
+    private readonly List<DiscordRole?> _guildToRoles = new();
 
-    public RoleCheckAndGive(ulong guildFromId, ulong guildFromRoleId, ulong guildToId, ulong guildToRoleId) {
+    public RoleCheckAndGive(ulong guildFromId, ulong guildFromRoleId, ulong guildToId, List<ulong> guildToRoleIds) {
         _guildFromId = guildFromId;
         _guildFromRoleId = guildFromRoleId;
         _guildToId = guildToId;
-        _guildToRoleId = guildToRoleId;
+        _guildToRoleIds = guildToRoleIds;
     }
-    
+
     /// <summary>
     /// When the guilds are downloaded populate the guild and role fields.
     /// </summary>
@@ -33,7 +33,10 @@ public class RoleCheckAndGive {
         _guildTo = e.Guilds[_guildToId];
 
         _guildFromRole = _guildFrom.GetRole(_guildFromRoleId);
-        _guildToRole = _guildTo.GetRole(_guildToRoleId);
+        foreach (var toRoleId in _guildToRoleIds) {
+            _guildToRoles.Add(_guildTo.GetRole(toRoleId));
+        }
+
         return Task.CompletedTask;
     }
 
@@ -42,7 +45,7 @@ public class RoleCheckAndGive {
     /// </summary>
     /// <param name="user">User to check and give a role to.</param>
     public async Task<bool> CheckAndGiveRole(DiscordUser user) {
-        if (_guildFromRole is null || _guildToRole is null || _guildFrom is null || _guildTo is null) {
+        if (_guildFromRole is null || _guildToRoles.Count == 0 || _guildFrom is null || _guildTo is null) {
             // Object has not yet been initialized
             return false;
         }
@@ -54,13 +57,18 @@ public class RoleCheckAndGive {
             return false;
         }
 
+        if (_guildToRoles.TrueForAll(toRole => guildToMember.Roles.Contains(toRole))) return true;
+
         if (!guildFromMember.Roles.Contains(_guildFromRole)) {
             // TODO: user doesnt have the required role
             return false;
         }
 
-        await guildToMember.GrantRoleAsync(_guildToRole,
-            $"Also has role: {_guildFromRole.Name} in {_guildFrom.Name} server.");
+        foreach (var toRole in _guildToRoles) {
+            await guildToMember.GrantRoleAsync(toRole,
+                $"Also has role: {_guildFromRole.Name} in {_guildFrom.Name} server.");
+        }
+
         return true;
     }
 }

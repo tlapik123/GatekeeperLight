@@ -15,7 +15,17 @@ var argException = new ArgumentException("One of the arguments provided to the p
 if (!ulong.TryParse(args[1], out var guildFromId)) throw argException;
 if (!ulong.TryParse(args[2], out var guildFromRoleId)) throw argException;
 if (!ulong.TryParse(args[3], out var guildToId)) throw argException;
-if (!ulong.TryParse(args[4], out var guildToRoleId)) throw argException;
+
+var guildToRoleIds = new List<ulong>();
+
+for (var i = 4; i < args.Length; i++) {
+    if (ulong.TryParse(args[i], out var guildToRoleId)) {
+        guildToRoleIds.Add(guildToRoleId);
+    } else {
+        throw argException;
+    }
+}
+
 
 // initialize the discord client
 var discord = new DiscordClient(new DiscordConfiguration {
@@ -26,7 +36,7 @@ var discord = new DiscordClient(new DiscordConfiguration {
 });
 
 var services = new ServiceCollection().AddSingleton<RoleCheckAndGive>(_ =>
-    new RoleCheckAndGive(guildFromId, guildFromRoleId, guildToId, guildToRoleId));
+    new RoleCheckAndGive(guildFromId, guildFromRoleId, guildToId, guildToRoleIds));
 var serviceProvider = services.BuildServiceProvider();
 
 var slash = discord.UseSlashCommands(new SlashCommandsConfiguration {
