@@ -44,6 +44,10 @@ var slash = discord.UseSlashCommands(new SlashCommandsConfiguration {
 });
 
 slash.RegisterCommands<SlashCommands>();
+slash.SlashCommandErrored += (_, e) => {
+    discord.Logger.LogError(new(800, "SlashCommand"), e.Exception, $"The {e.Exception.Message} exception was thrown in one of the Slash commands.");
+    return Task.CompletedTask;
+};
 
 discord.GuildDownloadCompleted += serviceProvider.GetRequiredService<RoleCheckAndGive>().GuildsDownloadCompletedHandler;
 
