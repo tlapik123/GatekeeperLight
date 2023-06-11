@@ -1,14 +1,14 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Microsoft.Extensions.Logging;
+using DSharpPlus.SlashCommands.Attributes;
 
 namespace GatekeeperLight.Commands;
 
-public sealed class SlashCommands : ApplicationCommandModule {
+public sealed class VerifyCommands : ApplicationCommandModule {
     private readonly RoleCheckAndGive _roleCheckAndGiveHandler;
 
-    public SlashCommands(RoleCheckAndGive roleCheckAndGiveHandler) {
+    public VerifyCommands(RoleCheckAndGive roleCheckAndGiveHandler) {
         _roleCheckAndGiveHandler = roleCheckAndGiveHandler;
     }
 
@@ -25,6 +25,7 @@ public sealed class SlashCommands : ApplicationCommandModule {
     
     [SlashCommand("verifyAll",
         "Verify all the people on the server")]
+    [SlashRequireUserPermissions(Permissions.Administrator,false)]
     public async Task VerifyAllCommand(InteractionContext ctx) {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
         

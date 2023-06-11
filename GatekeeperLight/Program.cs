@@ -43,7 +43,7 @@ var slash = discord.UseSlashCommands(new SlashCommandsConfiguration {
     Services = serviceProvider,
 });
 
-slash.RegisterCommands<SlashCommands>();
+slash.RegisterCommands<VerifyCommands>();
 slash.SlashCommandErrored += (_, e) => {
     discord.Logger.LogError(new(800, "SlashCommand"), e.Exception, $"The {e.Exception.Message} exception was thrown in one of the Slash commands.");
     return Task.CompletedTask;
