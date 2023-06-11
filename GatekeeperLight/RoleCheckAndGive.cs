@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using DSharpPlus.Exceptions;
 
 namespace GatekeeperLight;
 
@@ -49,19 +50,36 @@ public class RoleCheckAndGive {
             // Object has not yet been initialized
             return false;
         }
-
-        if (!_guildFrom.Members.TryGetValue(user.Id, out var guildFromMember)) {
-            // TODO: user is not on the from server.
-            return false;
-        }
         
-        if (!_guildFrom.Members.TryGetValue(user.Id, out var guildToMember)) {
-            // TODO: user is not on the "to" server
+        if (user.IsBot) {
+            // TODO: somehow do the error handling
             return false;
         }
 
-        if (user.IsBot || guildFromMember is null || guildToMember is null) {
-            // TODO: somehow do the error handling
+        // TODO there is some issue with getting members - why? 
+
+        /*if (!_guildFrom.Members.TryGetValue(user.Id, out var guildFromMember)) {
+            // TODO: user is not on the from server.
+            Console.WriteLine("User not in from server");
+            return false;
+        }
+
+        if (!_guildTo.Members.TryGetValue(user.Id, out var guildToMember)) {
+            // TODO: user is not on the "to" server
+            Console.WriteLine("User not in to server");
+            return false;
+        }*/
+        
+        DiscordMember guildFromMember;
+        DiscordMember guildToMember;
+        try {
+            guildFromMember = await _guildFrom.GetMemberAsync(user.Id);
+        } catch (NotFoundException) {
+            return false;
+        }
+        try {
+            guildToMember = await _guildTo.GetMemberAsync(user.Id);
+        } catch (NotFoundException) {
             return false;
         }
 
@@ -77,7 +95,7 @@ public class RoleCheckAndGive {
                 $"Also has role: {_guildFromRole.Name} in {_guildFrom.Name} server.");
         }
 
-        Console.WriteLine($"Gave role to: {guildToMember.Nickname}: {guildToMember.Id}");
+        Console.WriteLine($"Gave role to: {guildToMember.Username}: {guildToMember.Id}");
         return true;
     }
 }

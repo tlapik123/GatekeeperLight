@@ -30,7 +30,11 @@ public sealed class SlashCommands : ApplicationCommandModule {
         
         Console.WriteLine("Starting the verify all process");
 
-        foreach (var member in await ctx.Guild.GetAllMembersAsync()) {
+        var members = await ctx.Guild.GetAllMembersAsync();
+        
+        Console.WriteLine($"Number of members in guild: {members.Count}");
+        foreach (var member in members) {
+            Console.WriteLine($"Processing member: {member.Username}@{member.Id}");
             if (member.IsBot) continue;
             await _roleCheckAndGiveHandler.CheckAndGiveRole(member);
         }
