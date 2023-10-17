@@ -22,17 +22,17 @@ public sealed class VerifyCommands : ApplicationCommandModule {
         await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
             new DiscordInteractionResponseBuilder().WithContent(message));
     }
-    
+
     [SlashCommand("verifyAll",
         "Verify all the people on the server")]
-    [SlashRequireUserPermissions(Permissions.Administrator,false)]
+    [SlashRequireUserPermissions(Permissions.Administrator, false)]
     public async Task VerifyAllCommand(InteractionContext ctx) {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
-        
+
         Console.WriteLine("Starting the verify all process");
 
         var members = await ctx.Guild.GetAllMembersAsync();
-        
+
         Console.WriteLine($"Number of members in guild: {members.Count}");
         foreach (var member in members) {
             Console.WriteLine($"Processing member: {member.Username}@{member.Id}");

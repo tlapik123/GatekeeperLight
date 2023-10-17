@@ -1,9 +1,11 @@
 ﻿using DSharpPlus;
 using DSharpPlus.SlashCommands;
+
 using GatekeeperLight;
-using Microsoft.Extensions.Logging;
 using GatekeeperLight.Commands;
+
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 Console.WriteLine("Starting the bot!");
 

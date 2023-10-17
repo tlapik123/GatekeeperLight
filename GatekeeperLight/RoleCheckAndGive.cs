@@ -10,7 +10,6 @@ public class RoleCheckAndGive {
     private readonly ulong _guildFromRoleId;
     private readonly ulong _guildToId;
     private readonly List<ulong> _guildToRoleIds;
-
     private DiscordGuild? _guildFrom;
     private DiscordRole? _guildFromRole;
     private DiscordGuild? _guildTo;
@@ -50,7 +49,7 @@ public class RoleCheckAndGive {
             // Object has not yet been initialized
             return false;
         }
-        
+
         if (user.IsBot) {
             // TODO: somehow do the error handling
             return false;
@@ -69,7 +68,7 @@ public class RoleCheckAndGive {
             Console.WriteLine("User not in to server");
             return false;
         }*/
-        
+
         DiscordMember guildFromMember;
         DiscordMember guildToMember;
         try {
